@@ -35,7 +35,7 @@ export const SelectionListStage: React.FC<SelectionListStageProps> = ({
       case "learning-coach":
         return "Select a Learning Coach";
       case "department":
-        return "Select a Department";
+        return "Select a Mission Curator";
       case "administration":
         return "Select an Administrative Office";
       default:

@@ -35,7 +35,7 @@ export const InitialStage: React.FC<InitialStageProps> = ({
         >
           <span className="flex items-center gap-2">
             <School size={16} />
-            Academic Department
+            Mission Curators
           </span>
           <ArrowRight size={16} />
         </Button>

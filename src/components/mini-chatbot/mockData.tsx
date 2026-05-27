@@ -32,38 +32,66 @@ export const learningCoaches: Person[] = [
   { id: 20, name: "Prof. Calestous Juma", course: "Innovation Studies" }
 ];
 
-// Sample data for departments
+// ALU Mission Curators — `head` carries the mission area so the existing UI
+// renders it as a subtitle under each curator's name. Booking links are
+// included when available; curators without one are still listed so students
+// can reach out by email.
 export const departments: Person[] = [
-  { 
-    id: 1, 
-    name: "Computer Science Department", 
-    head: "Prof. Ada Obi",
-    calendarLink: "https://calendar.google.com/calendar/appointments"
+  {
+    id: 1,
+    name: "Fred Nkubito",
+    head: "Mission Area: Urbanization & Infrastructure",
+    email: "fnkubito@alueducation.com",
+    calendarLink: "https://calendar.app.google/ND451LWXxbJ7N4Wq9",
   },
-  { 
-    id: 2, 
-    name: "Business School", 
-    head: "Dr. James Mwangi",
-    calendarLink: "https://calendar.google.com/calendar/appointments" 
+  {
+    id: 2,
+    name: "Kagenza Rumongi",
+    head: "Mission Area: Governance",
+    email: "krumongi@alueducation.com",
+    calendarLink: "https://calendly.com/kagenzar",
   },
-  { 
-    id: 3, 
-    name: "Global Challenges", 
-    head: "Prof. Graça Machel",
-    calendarLink: "https://calendar.google.com/calendar/appointments" 
+  {
+    id: 3,
+    name: "Elizabeth Ndinda",
+    head: "Mission Area: Education",
+    email: "endinda@alueducation.com",
+    // Office hours available on request — contact via email.
   },
-  { 
-    id: 4, 
-    name: "Entrepreneurship", 
-    head: "Dr. Ashish Thakkar",
-    calendarLink: "https://calendar.google.com/calendar/appointments" 
+  {
+    id: 4,
+    name: "Sevika Varaden Reetoo",
+    head: "Mission Area: Climate Change",
+    email: "sreetoo@alueducation.com",
+    calendarLink: "https://calendar.app.google/aUYL6assM7VNA7WS7",
   },
-  { 
-    id: 5, 
-    name: "Engineering", 
-    head: "Prof. Venansius Baryamureeba",
-    calendarLink: "https://calendar.google.com/calendar/appointments" 
-  }
+  {
+    id: 5,
+    name: "Sibongile Musundwa",
+    head: "Mission Area: Arts, Culture & Design",
+    email: "smusundwa@alueducation.com",
+    calendarLink: "https://calendar.app.google/6hMsRRQXPkNrzFhJA",
+  },
+  {
+    id: 6,
+    name: "Bosede Funmi Akinbolusere",
+    head: "Mission Area: Women Empowerment & Gender Equality",
+    email: "bakinbolusere@alueducation.com",
+    // No booking link provided — contact via email.
+  },
+  {
+    id: 7,
+    name: "Brian Nicholas Neza",
+    head: "Mission Area: Agriculture",
+    email: "bneza@alueducation.com",
+    calendarLink: "https://sites.google.com/alueducation.com/aluknowledgemanagementportal/g-c-g-o/agriculture?authuser=0#h.4hyangxnbbcr",
+  },
+  {
+    id: 8,
+    name: "Arnaud Michel Nibaruta",
+    head: "BEL Program Manager — Office Hours",
+    calendarLink: "https://calendar.app.google/5js5KrCpeonqMfQN8",
+  },
 ];
 
 // Sample data for administration
