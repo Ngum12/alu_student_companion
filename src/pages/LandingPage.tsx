@@ -12,9 +12,13 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
-// Swap these URLs for real ALU photos when available.
-const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1600&q=80";
+// Real ALU assets served from /public. The leading slash makes Vite resolve
+// these against the deployment root, so they work both locally and on Vercel.
+// Filenames with spaces are URL-encoded so the browser fetches them correctly.
+const HERO_IMAGE = "/Andrew%20ALUSIVE.jpg.jpeg";
+const COMPANION_LOGO = "/logo%20(3).png";
+
+// The two below remain Unsplash placeholders until real ALU photos land.
 const STUDY_IMAGE =
   "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80";
 const CAMPUS_IMAGE =
@@ -48,9 +52,11 @@ export default function LandingPage() {
         <div className="h-1 w-full bg-[#D4AF37]" />
         <div className="max-w-7xl mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-md bg-[#D4AF37] flex items-center justify-center text-[#1A1A1A] font-bold text-sm">
-              A
-            </div>
+            <img
+              src={COMPANION_LOGO}
+              alt="ALU Student Companion logo"
+              className="w-8 h-8 rounded-md object-contain"
+            />
             <span className="font-semibold tracking-tight">ALU Student Companion</span>
           </div>
           <div className="flex items-center gap-3">
@@ -117,7 +123,7 @@ export default function LandingPage() {
             <div className="relative overflow-hidden rounded-3xl aspect-[4/5] shadow-2xl">
               <img
                 src={HERO_IMAGE}
-                alt="ALU students collaborating"
+                alt="ALU students at an ALUSIVE community event"
                 className="w-full h-full object-cover"
                 loading="eager"
               />
