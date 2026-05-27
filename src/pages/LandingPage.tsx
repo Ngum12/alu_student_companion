@@ -86,8 +86,8 @@ export default function LandingPage() {
               Built for ALU students, by the ALU community
             </div>
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl leading-[1.05] tracking-tight text-[#1A1A1A]">
-              The future of African leadership,{" "}
-              <span className="text-[#D4AF37]">guided by AI.</span>
+              Your AI Assistant for{" "}
+              <span className="text-[#D4AF37]">Smarter Learning.</span>
             </h1>
             <p className="mt-6 text-lg md:text-xl text-[#1A1A1A]/70 max-w-xl leading-relaxed">
               Your AI companion for every step of the ALU journey — from
