@@ -728,11 +728,11 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white pb-safe-tabbar md:pb-0">
       <div className="h-1 w-full bg-[#D4AF37]" />
 
-      <header className="border-b border-[#E8DDB0]">
-        <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+      <header className="border-b border-[#E8DDB0] safe-top">
+        <div className="max-w-5xl mx-auto px-4 md:px-6 h-14 md:h-16 flex items-center justify-between">
           <Link
             to="/chat"
             className="inline-flex items-center gap-2 text-sm text-[#1A1A1A]/70 hover:text-[#1A1A1A]"
@@ -761,10 +761,10 @@ export default function Settings() {
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 py-12">
-        <div className="mb-10">
-          <h1 className="font-serif text-4xl text-[#1A1A1A] tracking-tight">Settings</h1>
-          <p className="mt-2 text-[#1A1A1A]/70">
+      <main className="max-w-5xl mx-auto px-4 md:px-6 py-6 md:py-12">
+        <div className="mb-6 md:mb-10">
+          <h1 className="font-serif text-3xl md:text-4xl text-[#1A1A1A] tracking-tight">Settings</h1>
+          <p className="mt-2 text-sm md:text-base text-[#1A1A1A]/70">
             Configure the Companion to suit how you work.
           </p>
           <div className="mt-4 flex items-center gap-3 text-sm">

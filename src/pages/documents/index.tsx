@@ -12,17 +12,17 @@ export default function Documents() {
   };
   
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container max-w-4xl mx-auto py-8 px-4">
-        <Button 
-          variant="ghost" 
-          onClick={handleGoBack} 
-          className="mb-6 hover:bg-primary/10"
+    <div className="min-h-screen bg-background pb-safe-tabbar md:pb-0">
+      <div className="container max-w-4xl mx-auto py-4 md:py-8 px-4 safe-top">
+        <Button
+          variant="ghost"
+          onClick={handleGoBack}
+          className="mb-4 md:mb-6 hover:bg-primary/10"
         >
           <ChevronLeft className="mr-2 h-4 w-4" />
           Back
         </Button>
-        
+
         <DocumentManager />
       </div>
     </div>

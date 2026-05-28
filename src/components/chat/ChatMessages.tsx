@@ -69,15 +69,15 @@ export const ChatMessages = ({
 
   if (messages.length === 0) {
     return (
-      <div className="min-h-[calc(100vh-200px)] flex flex-col items-center justify-center px-4 py-12 bg-white">
+      <div className="min-h-[calc(100dvh-260px)] md:min-h-[calc(100vh-200px)] flex flex-col items-center justify-center px-4 py-8 md:py-12 bg-white">
         <div className="max-w-2xl w-full text-center">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#FBF7E9] border border-[#E8DDB0] mb-6">
-            <Sparkles className="h-6 w-6 text-[#D4AF37]" />
+          <div className="inline-flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-[#FBF7E9] border border-[#E8DDB0] mb-4 md:mb-6">
+            <Sparkles className="h-5 w-5 md:h-6 md:w-6 text-[#D4AF37]" />
           </div>
-          <h1 className="font-serif text-4xl md:text-5xl text-[#1A1A1A] tracking-tight mb-3">
+          <h1 className="font-serif text-[28px] md:text-5xl text-[#1A1A1A] tracking-tight mb-2 md:mb-3 leading-tight">
             How can I help you today?
           </h1>
-          <p className="text-[#1A1A1A]/60 mb-10">
+          <p className="text-sm md:text-base text-[#1A1A1A]/60 mb-6 md:mb-10 px-2">
             Ask anything about ALU — academics, campus life, policies, or events.
           </p>
 

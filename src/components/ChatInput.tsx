@@ -137,11 +137,11 @@ export const ChatInput = ({ onSend, disabled }: ChatInputProps) => {
   }, [message]);
 
   return (
-    <div className="fixed bottom-0 left-16 md:left-64 right-0 lg:right-80 pointer-events-none transition-all duration-300">
+    <div className="fixed bottom-[calc(64px+env(safe-area-inset-bottom))] md:bottom-0 left-0 md:left-64 right-0 lg:right-80 pointer-events-none transition-all duration-300">
       {/* Soft fade so messages don't bump abruptly into the input */}
       <div className="h-8 bg-gradient-to-b from-transparent to-white" />
       <div className="bg-white pointer-events-auto">
-        <div className="max-w-3xl mx-auto px-4 pb-5 pt-2">
+        <div className="max-w-3xl mx-auto px-3 md:px-4 pb-3 md:pb-5 pt-2">
           {attachments.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-3">
               {attachments.map((file, index) => (

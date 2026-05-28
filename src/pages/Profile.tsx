@@ -53,17 +53,17 @@ export default function Profile() {
       .join("") || "A";
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white pb-safe-tabbar md:pb-0">
       <div className="h-1 w-full bg-[#D4AF37]" />
 
-      <header className="border-b border-[#E8DDB0]">
-        <div className="max-w-3xl mx-auto px-6 h-16 flex items-center justify-between">
+      <header className="border-b border-[#E8DDB0] safe-top">
+        <div className="max-w-3xl mx-auto px-4 md:px-6 h-14 md:h-16 flex items-center justify-between">
           <Link
             to="/chat"
             className="inline-flex items-center gap-2 text-sm text-[#1A1A1A]/70 hover:text-[#1A1A1A]"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to chat
+            <span className="hidden sm:inline">Back to chat</span>
           </Link>
           <Button
             variant="ghost"
@@ -77,15 +77,15 @@ export default function Profile() {
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-6 py-14">
-        <div className="mb-10">
-          <h1 className="font-serif text-4xl text-[#1A1A1A] tracking-tight">Profile</h1>
-          <p className="mt-2 text-[#1A1A1A]/70">
+      <main className="max-w-3xl mx-auto px-4 md:px-6 py-6 md:py-14">
+        <div className="mb-6 md:mb-10">
+          <h1 className="font-serif text-3xl md:text-4xl text-[#1A1A1A] tracking-tight">Profile</h1>
+          <p className="mt-2 text-sm md:text-base text-[#1A1A1A]/70">
             Manage how you appear in the Companion.
           </p>
         </div>
 
-        <section className="bg-white border border-[#E8DDB0] rounded-2xl p-8">
+        <section className="bg-white border border-[#E8DDB0] rounded-2xl p-5 md:p-8">
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Avatar */}
             <div className="flex items-center gap-6">

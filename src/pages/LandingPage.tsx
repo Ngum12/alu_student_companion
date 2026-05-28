@@ -50,24 +50,28 @@ export default function LandingPage() {
         }`}
       >
         <div className="h-1 w-full bg-[#D4AF37]" />
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-10 h-14 md:h-16 flex items-center justify-between safe-top">
+          <div className="flex items-center gap-2 min-w-0">
             <img
               src={COMPANION_LOGO}
               alt="ALU Student Companion logo"
-              className="w-8 h-8 rounded-md object-contain"
+              className="w-7 h-7 md:w-8 md:h-8 rounded-md object-contain"
             />
-            <span className="font-semibold tracking-tight">ALU Student Companion</span>
+            <span className="font-semibold tracking-tight text-sm md:text-base truncate">
+              <span className="hidden sm:inline">ALU Student </span>Companion
+            </span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             <Button
               variant="ghost"
-              className="text-[#1A1A1A] hover:bg-[#FBF7E9]"
+              size="sm"
+              className="text-[#1A1A1A] hover:bg-[#FBF7E9] hidden sm:inline-flex"
               onClick={() => navigate("/login")}
             >
               Sign in
             </Button>
             <Button
+              size="sm"
               className="bg-[#1A1A1A] hover:bg-black text-white"
               onClick={() => navigate("/signup")}
             >
@@ -78,22 +82,22 @@ export default function LandingPage() {
       </header>
 
       {/* Hero */}
-      <section className="max-w-7xl mx-auto px-6 lg:px-10 pt-16 lg:pt-24 pb-20 lg:pb-28">
-        <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+      <section className="max-w-7xl mx-auto px-4 md:px-6 lg:px-10 pt-10 md:pt-16 lg:pt-24 pb-14 md:pb-20 lg:pb-28">
+        <div className="grid lg:grid-cols-12 gap-8 md:gap-10 lg:gap-16 items-center">
           <div className="lg:col-span-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FBF7E9] border border-[#E8DDB0] text-xs font-medium text-[#B8941F] mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FBF7E9] border border-[#E8DDB0] text-[11px] md:text-xs font-medium text-[#B8941F] mb-4 md:mb-6">
               <Sparkles className="h-3.5 w-3.5" />
               Built for ALU students, by the ALU community
             </div>
-            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl leading-[1.05] tracking-tight text-[#1A1A1A]">
+            <h1 className="font-serif text-[34px] sm:text-5xl md:text-6xl lg:text-7xl leading-[1.05] tracking-tight text-[#1A1A1A]">
               Your AI Assistant for{" "}
               <span className="text-[#D4AF37]">Smarter Learning.</span>
             </h1>
-            <p className="mt-6 text-lg md:text-xl text-[#1A1A1A]/70 max-w-xl leading-relaxed">
+            <p className="mt-4 md:mt-6 text-base md:text-xl text-[#1A1A1A]/70 max-w-xl leading-relaxed">
               Your AI companion for every step of the ALU journey — from
               academics and campus life to graduation and beyond.
             </p>
-            <div className="mt-10 flex flex-col sm:flex-row gap-3">
+            <div className="mt-6 md:mt-10 flex flex-col sm:flex-row gap-3">
               <Button
                 size="lg"
                 className="bg-[#1A1A1A] hover:bg-black text-white h-12 px-7 text-base"
@@ -111,7 +115,7 @@ export default function LandingPage() {
                 I already have an account
               </Button>
             </div>
-            <p className="mt-6 text-sm text-[#1A1A1A]/50">
+            <p className="mt-4 md:mt-6 text-xs md:text-sm text-[#1A1A1A]/50">
               For students with <span className="font-medium text-[#1A1A1A]/80">@alustudent.com</span>{" "}
               or <span className="font-medium text-[#1A1A1A]/80">@alueducation.com</span> emails.
             </p>
@@ -305,9 +309,19 @@ export default function LandingPage() {
             </div>
             <span>African Leadership University Student Companion</span>
           </div>
-          <p className="text-xs text-[#1A1A1A]/50">
-            © {new Date().getFullYear()} ALU. Built for students.
-          </p>
+          <div className="flex items-center gap-6">
+            <a
+              href="/presentation.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-medium text-[#1A1A1A]/60 hover:text-[#B8941F] transition-colors underline-offset-4 hover:underline"
+            >
+              Doc
+            </a>
+            <p className="text-xs text-[#1A1A1A]/50">
+              © {new Date().getFullYear()} ALU. Built for students.
+            </p>
+          </div>
         </div>
       </footer>
     </div>

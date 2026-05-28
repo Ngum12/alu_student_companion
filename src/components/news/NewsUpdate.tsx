@@ -41,8 +41,8 @@ export const NewsUpdate = () => {
   ];
 
   return (
-    <div className="h-full overflow-hidden flex flex-col bg-white border-l border-[#E8DDB0]">
-      <div className="p-6 pb-4 bg-white border-b border-[#E8DDB0]">
+    <div className="flex flex-col bg-white">
+      <div className="hidden md:block p-6 pb-4 bg-white border-b border-[#E8DDB0]">
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 bg-[#D4AF37] rounded-sm flex items-center justify-center text-[#1A1A1A] font-bold text-xs">
             ALU
@@ -51,7 +51,7 @@ export const NewsUpdate = () => {
         </div>
       </div>
 
-      <div className="flex-grow overflow-y-auto p-6 pt-4 space-y-5">
+      <div className="p-4 md:p-6 md:pt-4 space-y-4 md:space-y-5">
         {news.map((item, index) => (
           <div
             key={index}
