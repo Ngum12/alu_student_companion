@@ -24,10 +24,11 @@ const APP_ROUTES = ["/chat", "/news", "/opportunities", "/documents", "/profile"
 const Chrome = () => {
   const { pathname } = useLocation();
   const showTabs = APP_ROUTES.some((r) => pathname === r || pathname.startsWith(r + "/"));
+  // Full chat page already owns the chat experience, so skip the floating mini chatbot there.
+  const onChatPage = pathname === "/chat" || pathname.startsWith("/chat/");
   return (
     <>
-      {/* Mini chatbot is only useful on the landing/marketing surface; the real chat owns mobile */}
-      {!showTabs && <MiniChatbot />}
+      {!onChatPage && <MiniChatbot />}
       {showTabs && <MobileTabBar />}
     </>
   );

@@ -19,9 +19,9 @@ export const MiniChatbot = () => {
   }, [isOpen]);
 
   return (
-    <div ref={containerRef} className="fixed z-50 bottom-6 right-6">
+    <div ref={containerRef} className="fixed z-50 bottom-[calc(72px+env(safe-area-inset-bottom))] md:bottom-6 right-4 md:right-6">
       {isOpen ? (
-        <Card className="w-80 shadow-xl animate-fade-in bg-white border border-[#E8DDB0] rounded-2xl overflow-hidden">
+        <Card className="w-[min(22rem,calc(100vw-2rem))] shadow-xl animate-fade-in bg-white border border-[#E8DDB0] rounded-2xl overflow-hidden">
           <div className="flex items-center justify-between p-3 bg-white border-b border-[#E8DDB0]">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded bg-[#D4AF37] flex items-center justify-center text-[#1A1A1A] font-bold text-xs">
