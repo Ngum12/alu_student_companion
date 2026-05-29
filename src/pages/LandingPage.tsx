@@ -133,7 +133,7 @@ export default function LandingPage() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6 text-white">
-                <p className="text-sm font-medium opacity-90">Join 2,000+ students</p>
+                <p className="text-sm font-medium opacity-90">Join 500+ students</p>
                 <p className="text-xs opacity-70 mt-1">already using the Companion</p>
               </div>
             </div>
@@ -145,9 +145,9 @@ export default function LandingPage() {
       <section className="border-y border-[#E8DDB0] bg-[#FBF7E9]/50">
         <div className="max-w-7xl mx-auto px-6 lg:px-10 py-10 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           {[
-            { value: "2,000+", label: "Active students" },
+            { value: "500+", label: "Active students" },
             { value: "24/7", label: "Instant answers" },
-            { value: "3", label: "ALU campuses" },
+            { value: "1", label: "ALU campus" },
             { value: "100%", label: "ALU-specific" },
           ].map((stat) => (
             <div key={stat.label}>
@@ -181,7 +181,7 @@ export default function LandingPage() {
             {
               icon: Compass,
               title: "Campus navigation",
-              body: "Find the right department, contact or service across all ALU campuses without the runaround.",
+              body: "Find the right department, contact or service across the ALU campus without the runaround.",
             },
             {
               icon: MessageSquare,
