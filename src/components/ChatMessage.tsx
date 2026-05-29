@@ -63,12 +63,12 @@ export const ChatMessage = ({
   };
 
   return (
-    <div className={cn("w-full py-6 px-4 md:px-8 group", isAi ? "bg-[#FBF7E9]/30" : "bg-white")}>
-      <div className={cn("max-w-3xl mx-auto", !isAi && "flex justify-end")}>
+    <div className={cn("w-full py-6 px-4 md:px-8 group overflow-x-hidden", isAi ? "bg-[#FBF7E9]/30" : "bg-white")}>
+      <div className={cn("max-w-3xl mx-auto min-w-0", !isAi && "flex justify-end")}>
         <div
           className={cn(
-            "space-y-2",
-            !isAi && "max-w-[75%] bg-[#F4F4F4] text-[#1A1A1A] rounded-3xl px-4 py-2.5"
+            "space-y-2 min-w-0 max-w-full",
+            !isAi && "max-w-[85%] md:max-w-[75%] bg-[#F4F4F4] text-[#1A1A1A] rounded-3xl px-4 py-2.5 break-words"
           )}
         >
           {isEditing ? (
@@ -98,7 +98,7 @@ export const ChatMessage = ({
               </div>
             </div>
           ) : (
-            <div className="text-left text-[15px] leading-[1.75] text-[#1A1A1A]">
+            <div className="text-left text-[15px] leading-[1.75] text-[#1A1A1A] [overflow-wrap:anywhere] min-w-0 max-w-full">
               <ReactMarkdown
                 remarkPlugins={[remarkMath, remarkGfm]}
                 rehypePlugins={[rehypeKatex]}

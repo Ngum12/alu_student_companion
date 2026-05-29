@@ -56,7 +56,7 @@ export const ChatContainer = () => {
         />
       </div>
 
-      <main className="flex-1 md:pl-64 lg:pr-80 transition-all duration-300 relative">
+      <main className="flex-1 min-w-0 md:pl-64 lg:pr-80 transition-all duration-300 relative overflow-x-hidden">
         {/* Mobile top bar */}
         <div className="md:hidden sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-[#E8DDB0] safe-top">
           <div className="h-14 px-3 flex items-center gap-2">

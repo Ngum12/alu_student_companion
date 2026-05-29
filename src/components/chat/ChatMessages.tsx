@@ -105,7 +105,7 @@ export const ChatMessages = ({
   }
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-white min-h-screen overflow-x-hidden">
       {messages.map((message) => (
         <ChatMessage
           key={message.id}
