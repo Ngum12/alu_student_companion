@@ -20,7 +20,7 @@ export const NewsUpdate = () => {
       category: "Academic",
       description: "ALU introduces an innovative leadership development program focused on African entrepreneurship.",
       url: "https://www.alueducation.com/news/leadership-program-2024",
-      image: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
+      image: "/news-leadership.png"
     },
     {
       title: "Campus Sustainability Initiative",
@@ -28,7 +28,7 @@ export const NewsUpdate = () => {
       category: "Campus",
       description: "ALU commits to 100% renewable energy usage by 2025 across all campuses.",
       url: "https://www.alueducation.com/news/sustainability-2025",
-      image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
+      image: "/news-sustainability.png"
     },
     {
       title: "Tech Innovation Challenge",
@@ -36,7 +36,7 @@ export const NewsUpdate = () => {
       category: "Events",
       description: "Join the upcoming pan-African tech innovation challenge with prizes worth $10,000.",
       url: "https://www.alueducation.com/events/tech-challenge",
-      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
+      image: "/news-tech.png"
     }
   ];
 

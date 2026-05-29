@@ -18,11 +18,8 @@ import { useAuth } from "@/contexts/AuthContext";
 const HERO_IMAGE = "/Andrew%20ALUSIVE.jpg.jpeg";
 const COMPANION_LOGO = "/logo%20(3).png";
 
-// The two below remain Unsplash placeholders until real ALU photos land.
-const STUDY_IMAGE =
-  "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80";
-const CAMPUS_IMAGE =
-  "https://images.unsplash.com/photo-1571260899304-425eee4c7efc?auto=format&fit=crop&w=1200&q=80";
+const STUDY_IMAGE = "/study.png";
+const CAMPUS_IMAGE = "/campus.png";
 
 export default function LandingPage() {
   const navigate = useNavigate();

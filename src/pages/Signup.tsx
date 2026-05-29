@@ -6,8 +6,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { ArrowLeft, ArrowRight, Eye, EyeOff, Loader, ShieldCheck } from "lucide-react";
 
-const SIDE_IMAGE =
-  "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80";
+const SIDE_IMAGE = "/signup-hero.png";
 
 const validateEmail = (email: string) =>
   email.endsWith("@alustudent.com") || email.endsWith("@alueducation.com");

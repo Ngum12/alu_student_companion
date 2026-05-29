@@ -6,8 +6,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { ArrowLeft, Eye, EyeOff, Loader } from "lucide-react";
 
-const SIDE_IMAGE =
-  "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80";
+const SIDE_IMAGE = "/login-hero.png";
 
 export default function Login() {
   const [email, setEmail] = useState("");
