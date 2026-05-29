@@ -42,6 +42,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return email.endsWith('@alustudent.com') || email.endsWith('@alueducation.com');
   };
 
+  // Translate Firebase auth error codes into human-friendly messages
+  const friendlyAuthError = (error: any): Error => {
+    const code: string = error?.code || "";
+    const message: string = (() => {
+      switch (code) {
+        case "auth/invalid-credential":
+        case "auth/wrong-password":
+        case "auth/invalid-login-credentials":
+          return "Wrong email or password. If you signed up with Google, use the Google button instead.";
+        case "auth/user-not-found":
+          return "No account found for that email. Create one to get started.";
+        case "auth/email-already-in-use":
+          return "An account already exists for this email. Try signing in instead.";
+        case "auth/weak-password":
+          return "Password is too weak. Use at least 8 characters.";
+        case "auth/invalid-email":
+          return "That doesn't look like a valid email address.";
+        case "auth/too-many-requests":
+          return "Too many attempts. Please wait a moment and try again.";
+        case "auth/network-request-failed":
+          return "Network error. Check your connection and try again.";
+        case "auth/popup-closed-by-user":
+        case "auth/cancelled-popup-request":
+          return "Sign-in was cancelled.";
+        case "auth/account-exists-with-different-credential":
+          return "This email is linked to a different sign-in method. Try Google sign-in.";
+        case "auth/user-disabled":
+          return "This account has been disabled. Contact ALU support.";
+        case "auth/operation-not-allowed":
+          return "Email/password sign-in is not enabled. Contact the administrator.";
+        default:
+          return error?.message?.startsWith("Please use your ALU")
+            ? error.message
+            : "Something went wrong. Please try again.";
+      }
+    })();
+    const out = new Error(message);
+    (out as any).code = code;
+    return out;
+  };
+
   // Email/Password signup
   async function signup(email: string, password: string, name: string): Promise<User> {
     // Validate ALU email
@@ -60,7 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return userCredential.user;
     } catch (error: any) {
       console.error("Signup error:", error);
-      throw error;
+      throw friendlyAuthError(error);
     }
   }
 
@@ -69,18 +110,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-      
+
       // Check if email is ALU email
       if (!user.email || !verifyAluEmail(user.email)) {
         // Sign out the user since they don't have ALU email
         await signOut(auth);
         throw new Error("Please use your ALU student or staff email");
       }
-      
+
       return user;
     } catch (error: any) {
       console.error("Google auth error:", error);
-      throw error;
+      throw friendlyAuthError(error);
     }
   }
 
@@ -91,7 +132,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return userCredential.user;
     } catch (error: any) {
       console.error("Login error:", error);
-      throw error;
+      throw friendlyAuthError(error);
     }
   }
 
