@@ -99,6 +99,7 @@ const streamResponseFromBackend = async (
   const decoder = new TextDecoder();
   let buffer = "";
   let accumulated = "";
+  let streamErrorMessage: string | null = null;
 
   // SSE frames are separated by "\n\n". We accumulate raw bytes and split.
   while (true) {
@@ -125,12 +126,19 @@ const streamResponseFromBackend = async (
         } else if (event.type === "done") {
           callbacks.onDone?.();
         } else if (event.type === "error") {
-          callbacks.onError?.(event.message ?? "Stream error");
+          streamErrorMessage = event.message ?? "Stream error";
         }
       } catch (e) {
         console.warn("Bad SSE frame", payload, e);
       }
     }
+  }
+
+  // Throw if the stream signaled an error OR ended without any text — the
+  // outer streamResponse() catches this and retries via the non-streaming
+  // endpoint, which falls back to Groq server-side.
+  if (streamErrorMessage || !accumulated) {
+    throw new Error(streamErrorMessage ?? "Stream ended with no content");
   }
 
   return accumulated;
