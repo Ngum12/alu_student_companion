@@ -1,4 +1,4 @@
-import { API_URL, fetchWithTimeout } from "@/config/api";
+import { API_URL, fetchWithTimeout, authHeader } from "@/config/api";
 
 export type Opportunity = {
   id: string;
@@ -345,7 +345,11 @@ const writeCache = (opportunities: Opportunity[]) => {
  */
 export const getOpportunities = async (): Promise<Opportunity[]> => {
   try {
-    const res = await fetchWithTimeout(OPPORTUNITIES_ENDPOINT, { method: "GET" }, 4000);
+    const res = await fetchWithTimeout(
+      OPPORTUNITIES_ENDPOINT,
+      { method: "GET", headers: { ...(await authHeader()) } },
+      4000
+    );
     if (res.ok) {
       const data = (await res.json()) as { opportunities?: Opportunity[] };
       if (Array.isArray(data.opportunities) && data.opportunities.length > 0) {

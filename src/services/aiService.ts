@@ -1,5 +1,5 @@
 import { Message } from "@/types/chat";
-import { API_URL, fetchWithTimeout } from "@/config/api";
+import { API_URL, fetchWithTimeout, authHeader } from "@/config/api";
 
 // Phase 2: hits the Claude + RAG endpoint on the HF backend.
 // To revert to the legacy alu_brain + Groq fallback, change this back to `/api/chat`.
@@ -55,7 +55,7 @@ const getResponseFromBackend = async (
     CHAT_ENDPOINT,
     {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...(await authHeader()) },
       body: JSON.stringify({ message: query, history, options }),
     },
     30_000
@@ -87,7 +87,11 @@ const streamResponseFromBackend = async (
 
   const res = await fetch(CHAT_STREAM_ENDPOINT, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "text/event-stream" },
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "text/event-stream",
+      ...(await authHeader()),
+    },
     body: JSON.stringify({ message: query, history }),
   });
 

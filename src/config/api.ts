@@ -31,6 +31,21 @@ export const fetchWithTimeout = async (
 };
 
 /**
+ * Returns an { Authorization: "Bearer <token>" } header for the signed-in
+ * user. Used by any call to a server route protected by require_user /
+ * require_admin (chat, opportunities, essay coach, admin routes). Throws if
+ * no user is signed in so callers fail fast instead of getting a 401.
+ */
+export const authHeader = async (): Promise<{ Authorization: string }> => {
+  const user = auth.currentUser;
+  if (!user) {
+    throw new Error("Not signed in — auth token unavailable");
+  }
+  const token = await user.getIdToken();
+  return { Authorization: `Bearer ${token}` };
+};
+
+/**
  * Fetch wrapper for protected /api/admin/* routes. Attaches the current
  * user's Firebase ID token as a Bearer header — the backend's require_admin
  * dependency is the real gate, this just presents the credential.
@@ -42,13 +57,9 @@ export const adminFetch = async (
   path: string,
   options: RequestInit = {}
 ): Promise<Response> => {
-  const user = auth.currentUser;
-  if (!user) {
-    throw new Error("Not signed in — admin token unavailable");
-  }
-  const token = await user.getIdToken();
+  const { Authorization } = await authHeader();
   const headers = new Headers(options.headers);
-  headers.set("Authorization", `Bearer ${token}`);
+  headers.set("Authorization", Authorization);
   return fetch(`${API_URL}${path}`, { ...options, headers });
 };
 
