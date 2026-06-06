@@ -52,7 +52,7 @@ import {
   CheckCircle2
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { isAdmin as isAdminUser, grantAdminSession, getAdminEmail, isAdminEmail, clearAdminSession } from "@/utils/adminAuth";
+import { isAdmin as isAdminUser, grantAdminSession, getAdminEmail, clearAdminSession } from "@/utils/adminAuth";
 import { API_URL, checkBackendHealth } from "@/config/api";
 import { aiService } from "@/services/aiService";
 import { useAuth } from "@/contexts/AuthContext";
@@ -169,11 +169,11 @@ const FeatureToggle = ({
 };
 
 // Admin authentication is centralised in @/utils/adminAuth.
-// Authorized admin emails come from VITE_ADMIN_EMAILS (comma-separated).
-// In Phase 2 the credential check will move to the backend; for now we
-// authenticate against Firebase via the standard /login flow and only allow
-// the Advanced tab to unlock when the signed-in user's email is in the
-// admin allowlist.
+// The admin allowlist lives server-side (backend ADMIN_EMAILS secret) and is
+// enforced by require_admin on every /api/admin/* route. The client no longer
+// ships an admin-email list: we authenticate against Firebase via the standard
+// /login flow, reveal the Advanced tab, and let the backend reject non-admins
+// (401/403) on the actual privileged calls.
 
 export default function Settings() {
   const { currentUser, login } = useAuth();
@@ -693,16 +693,14 @@ export default function Settings() {
     return (value / max) * 100;
   };
 
-  // Admin unlock: authenticate against Firebase, then check the email allowlist.
-  // No plaintext credentials live in the bundle.
+  // Admin unlock: authenticate against Firebase. There is no client-side email
+  // allowlist — the backend decides admin status from its ADMIN_EMAILS secret
+  // and rejects non-admins with 401/403 on the actual /api/admin/* calls. The
+  // local session below only reveals the admin UI; it grants no real access.
   const handleLogin = async () => {
     setLoginError("");
     if (!userEmail || !userPassword) {
       setLoginError("Email and password are required.");
-      return;
-    }
-    if (!isAdminEmail(userEmail)) {
-      setLoginError("This email is not on the admin allowlist.");
       return;
     }
     try {

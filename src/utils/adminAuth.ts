@@ -1,20 +1,17 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const ADMIN_EMAILS = (import.meta.env.VITE_ADMIN_EMAILS ?? "")
-  .split(",")
-  .map((s) => s.trim().toLowerCase())
-  .filter(Boolean);
+// NOTE: There is no admin-email allowlist in the client anymore.
+// Admin identity is decided server-side by the backend's ADMIN_EMAILS secret
+// (enforced by require_admin on every /api/admin/* route). The helpers below
+// only gate what the UI *renders* — they are UX, not security. Any privileged
+// data still has to pass the backend check via adminFetch, which returns
+// 401/403 if the signed-in user isn't actually an admin.
 
 const SESSION_KEY = "ADMIN_SESSION_EXPIRES";
 const EMAIL_KEY = "ADMIN_EMAIL";
 const ROLE_KEY = "USER_ROLE";
 const SESSION_HOURS = 8;
-
-export const isAdminEmail = (email: string | null | undefined): boolean => {
-  if (!email) return false;
-  return ADMIN_EMAILS.includes(email.toLowerCase());
-};
 
 export const isAdmin = (): boolean => {
   const expires = localStorage.getItem(SESSION_KEY);
@@ -22,15 +19,15 @@ export const isAdmin = (): boolean => {
     clearAdminSession();
     return false;
   }
-  const email = localStorage.getItem(EMAIL_KEY);
-  const role = localStorage.getItem(ROLE_KEY);
-  return role === "admin" && isAdminEmail(email);
+  return localStorage.getItem(ROLE_KEY) === "admin";
 };
 
+/**
+ * Record a local admin session so the UI can show the admin area. This is a
+ * client convenience only — it grants no real access. The backend decides
+ * whether the user's Firebase token is actually an admin on each request.
+ */
 export const grantAdminSession = (email: string): void => {
-  if (!isAdminEmail(email)) {
-    throw new Error("Email is not authorized as admin");
-  }
   const expires = new Date();
   expires.setHours(expires.getHours() + SESSION_HOURS);
   localStorage.setItem(EMAIL_KEY, email.toLowerCase());
