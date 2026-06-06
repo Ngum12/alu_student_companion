@@ -1,3 +1,5 @@
+import { auth } from "@/lib/firebase";
+
 export const getApiUrl = (): string => {
   const fromEnv = import.meta.env.VITE_API_URL;
   if (fromEnv) return fromEnv;
@@ -26,6 +28,28 @@ export const fetchWithTimeout = async (
   } finally {
     clearTimeout(timeoutId);
   }
+};
+
+/**
+ * Fetch wrapper for protected /api/admin/* routes. Attaches the current
+ * user's Firebase ID token as a Bearer header — the backend's require_admin
+ * dependency is the real gate, this just presents the credential.
+ *
+ * `path` is joined to API_URL, e.g. adminFetch("/api/admin/sheet-status").
+ * Throws if no user is signed in so callers fail fast instead of getting 401.
+ */
+export const adminFetch = async (
+  path: string,
+  options: RequestInit = {}
+): Promise<Response> => {
+  const user = auth.currentUser;
+  if (!user) {
+    throw new Error("Not signed in — admin token unavailable");
+  }
+  const token = await user.getIdToken();
+  const headers = new Headers(options.headers);
+  headers.set("Authorization", `Bearer ${token}`);
+  return fetch(`${API_URL}${path}`, { ...options, headers });
 };
 
 export const checkBackendHealth = async (): Promise<boolean> => {

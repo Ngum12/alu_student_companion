@@ -53,21 +53,22 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2 bg-white">
+    <div className="min-h-screen grid lg:grid-cols-2 bg-[#FBFAF6]">
       {/* Form side */}
-      <div className="flex flex-col px-6 py-10 lg:px-16 lg:py-14">
+      <div className="relative flex flex-col px-6 py-10 lg:px-16 lg:py-14">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-64 brand-glow" />
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-sm text-[#1A1A1A]/60 hover:text-[#1A1A1A] transition-colors mb-12"
+          className="relative inline-flex items-center gap-2 text-sm text-[#1A1A1A]/60 hover:text-[#1A1A1A] transition-colors mb-12"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to home
         </Link>
 
         <div className="flex-1 flex items-center justify-center">
-          <div className="w-full max-w-md">
-            <div className="flex items-center gap-2 mb-10">
-              <div className="w-8 h-8 rounded-md bg-[#D4AF37] flex items-center justify-center text-[#1A1A1A] font-bold text-sm">
+          <div className="relative w-full max-w-md animate-rise">
+            <div className="flex items-center gap-2.5 mb-10">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#F4D773] to-[#D4AF37] flex items-center justify-center text-[#1A1A1A] font-bold text-sm shadow-gold">
                 A
               </div>
               <span className="font-semibold tracking-tight text-[#1A1A1A]">
@@ -75,8 +76,8 @@ export default function Login() {
               </span>
             </div>
 
-            <h1 className="font-serif text-4xl text-[#1A1A1A] tracking-tight mb-3">
-              Welcome back
+            <h1 className="font-serif text-4xl md:text-5xl text-[#1A1A1A] tracking-tight mb-3">
+              Welcome <span className="text-gradient-gold">back</span>
             </h1>
             <p className="text-[#1A1A1A]/70 mb-10">
               Sign in to continue your conversation with the Companion.
