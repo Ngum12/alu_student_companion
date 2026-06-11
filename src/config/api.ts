@@ -11,7 +11,7 @@ export const getApiUrl = (): string => {
     return "http://localhost:8080";
   }
 
-  return "https://ngum-alu-chatbot.hf.space";
+  return "https://studentcompanion-alu-chatbot.hf.space";
 };
 
 export const API_URL = getApiUrl();

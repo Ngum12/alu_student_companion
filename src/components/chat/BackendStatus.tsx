@@ -22,7 +22,7 @@ export const BackendStatus = () => {
     if (useLocalBackend) return "http://localhost:8000";
     
     // Production deployment URL
-    return "https://ngum-alu-chatbot.hf.space";
+    return "https://studentcompanion-alu-chatbot.hf.space";
   };
 
   // Check backend availability
