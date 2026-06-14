@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, BarChart, CheckCircle, Filter, Search, ThumbsDown, ThumbsUp } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,30 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-// Create requireAdmin function directly in this file for now
-const requireAdmin = <P extends object>(Component: React.ComponentType<P>) => {
-  const AdminProtectedComponent = function(props: P) {
-    const isAdmin = localStorage.getItem("USER_ROLE") === "admin";
-    
-    if (!isAdmin) {
-      return (
-        <div className="flex flex-col items-center justify-center h-screen">
-          <h1 className="text-2xl font-bold mb-4">Admin Access Required</h1>
-          <p className="text-[#1A1A1A]/50 mb-6">You need admin privileges to view this page.</p>
-          <Link to="/" className="text-[#D4AF37] hover:underline">Return to home</Link>
-        </div>
-      );
-    }
-    
-    return <Component {...props} />;
-  };
-  
-  // Set display name for React Fast Refresh
-  AdminProtectedComponent.displayName = `RequireAdmin(${Component.displayName || Component.name || 'Component'})`;
-  
-  return AdminProtectedComponent;
-};
+import { requireAdmin } from "@/utils/adminAuth";
 
 // Define feedback interface
 interface Feedback {
@@ -43,62 +20,50 @@ interface Feedback {
   category: string;
 }
 
-// Mock feedback data
-const mockFeedback: Feedback[] = [
-  {
-    id: 'fb-1',
-    type: 'positive',
-    message: 'The assistant provided accurate information about campus locations.',
-    userQuery: 'Where is ALU located?',
-    aiResponse: 'ALU has campuses in Rwanda (Kigali) and Mauritius (Beau Plan)...',
-    timestamp: '2023-08-15T14:32:00Z',
-    category: 'accuracy'
-  },
-  {
-    id: 'fb-2',
-    type: 'negative',
-    message: 'The AI didn\'t understand my question about transfer credits.',
-    userQuery: 'How do I transfer credits from my previous university?',
-    aiResponse: 'I don\'t have specific information about credit transfer processes...',
-    timestamp: '2023-08-14T09:15:00Z',
-    category: 'knowledge'
-  },
-  {
-    id: 'fb-3',
-    type: 'negative',
-    message: 'The response was too vague and didn\'t answer my specific question.',
-    userQuery: 'What are the admission requirements for the MBA program?',
-    aiResponse: 'Admission requirements vary by program. Generally, you\'ll need...',
-    timestamp: '2023-08-13T16:45:00Z',
-    category: 'specificity'
-  },
-  {
-    id: 'fb-4',
-    type: 'positive',
-    message: 'Very helpful information about the scholarship application process!',
-    userQuery: 'How do I apply for scholarships at ALU?',
-    aiResponse: 'To apply for scholarships at ALU, you should start by...',
-    timestamp: '2023-08-12T11:20:00Z',
-    category: 'helpfulness'
-  },
-  {
-    id: 'fb-5',
-    type: 'positive',
-    message: 'The AI provided clear and concise information.',
-    userQuery: 'What is the academic calendar for this year?',
-    aiResponse: 'The academic year at ALU is divided into three terms...',
-    timestamp: '2023-08-11T13:50:00Z',
-    category: 'clarity'
+// Raw shape of an entry in the localStorage "FEEDBACK" array, as written by the
+// chat feedback flow. Fields beyond `type`/`message`/`timestamp` are optional
+// because older entries may not have them.
+interface StoredFeedback {
+  type?: 'positive' | 'negative';
+  message?: string;
+  details?: string;
+  userQuery?: string;
+  aiResponse?: string;
+  category?: string;
+  timestamp?: number | string;
+}
+
+// Load real feedback from localStorage (the same "FEEDBACK" store the chat UI
+// and Settings page use) and normalize it to the dashboard's Feedback shape.
+const loadFeedback = (): Feedback[] => {
+  try {
+    const raw = JSON.parse(localStorage.getItem("FEEDBACK") || "[]") as StoredFeedback[];
+    if (!Array.isArray(raw)) return [];
+    return raw.map((item, i) => ({
+      id: `fb-${i}`,
+      type: item.type === "positive" ? "positive" : "negative",
+      message: item.message ?? "(no message)",
+      userQuery: item.userQuery ?? "",
+      aiResponse: item.aiResponse ?? item.details ?? "",
+      timestamp: new Date(item.timestamp ?? Date.now()).toISOString(),
+      category: item.category ?? "general",
+    }));
+  } catch (error) {
+    console.error("Failed to load feedback from storage:", error);
+    return [];
   }
-];
+};
 
 const FeedbackDashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [feedbackCategory, setFeedbackCategory] = useState('all');
   const [feedbackType, setFeedbackType] = useState('all');
-  
+
+  // Real feedback from localStorage, loaded once per mount.
+  const allFeedback = useMemo(() => loadFeedback(), []);
+
   // Filter feedback based on search term and filters
-  const filteredFeedback = mockFeedback.filter(feedback => {
+  const filteredFeedback = allFeedback.filter(feedback => {
     const matchesSearch = 
       searchTerm === '' || 
       feedback.userQuery.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -134,7 +99,7 @@ const FeedbackDashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-4xl font-bold">{mockFeedback.filter(f => f.type === 'positive').length}</p>
+            <p className="text-4xl font-bold">{allFeedback.filter(f => f.type === 'positive').length}</p>
           </CardContent>
         </Card>
         
@@ -146,7 +111,7 @@ const FeedbackDashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-4xl font-bold">{mockFeedback.filter(f => f.type === 'negative').length}</p>
+            <p className="text-4xl font-bold">{allFeedback.filter(f => f.type === 'negative').length}</p>
           </CardContent>
         </Card>
         
@@ -159,7 +124,9 @@ const FeedbackDashboard = () => {
           </CardHeader>
           <CardContent>
             <p className="text-4xl font-bold">
-              {Math.round((mockFeedback.filter(f => f.type === 'positive').length / mockFeedback.length) * 100)}%
+              {allFeedback.length === 0
+                ? "0"
+                : Math.round((allFeedback.filter(f => f.type === 'positive').length / allFeedback.length) * 100)}%
             </p>
           </CardContent>
         </Card>

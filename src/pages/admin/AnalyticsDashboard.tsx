@@ -1,49 +1,61 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { requireAdmin } from "@/utils/adminAuth";
+import { adminFetch } from "@/config/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Clipboard, Download, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
 
-// Types for analytics data
+// Types for analytics data (derived from the backend's GET /api/admin/overview).
 interface AnalyticsData {
   totalQueries: number;
+  totalStudents: number;
+  activeStudents7d: number;
+  totalConversations: number;
   queryCategories: {name: string, count: number}[];
-  responseTime: number;
-  userSatisfaction: number;
   topQueries: {query: string, count: number}[];
   dailyUsage: {date: string, count: number}[];
 }
 
-// Mock data - to be replaced with actual API call
-const mockAnalytics: AnalyticsData = {
-  totalQueries: 1287,
-  queryCategories: [
-    {name: "Academic", count: 450},
-    {name: "Administrative", count: 350},
-    {name: "Technical", count: 280},
-    {name: "Campus Life", count: 207}
-  ],
-  responseTime: 0.82,
-  userSatisfaction: 0.87,
-  topQueries: [
-    {query: "ALU location", count: 89},
-    {query: "Registration deadline", count: 76},
-    {query: "Course prerequisites", count: 62},
-    {query: "Grading policy", count: 58},
-    {query: "Internship opportunities", count: 51}
-  ],
-  dailyUsage: [
-    {date: "Mon", count: 145},
-    {date: "Tue", count: 132},
-    {date: "Wed", count: 164},
-    {date: "Thu", count: 123},
-    {date: "Fri", count: 132},
-    {date: "Sat", count: 90},
-    {date: "Sun", count: 72}
-  ]
+// Shape returned by GET /api/admin/overview (admin_routes.py: the three Aurora
+// analytics views). Fields are nullable because the views may have no rows yet.
+interface OverviewResponse {
+  overview: {
+    total_students?: number;
+    active_students_7d?: number;
+    total_conversations?: number;
+    total_student_messages?: number;
+    open_inquiries?: number;
+    bookings_30d?: number;
+  } | null;
+  top_themes: { theme: string; question_count: number }[];
+  engagement_daily: { day: string; student_messages: number }[];
+}
+
+// Map the backend overview payload onto the dashboard's view model. The Aurora
+// views expose engagement by theme + day; we surface those directly rather than
+// inventing metrics the backend doesn't track (response time / satisfaction are
+// not in the data layer yet, so they read 0).
+const toAnalytics = (data: OverviewResponse): AnalyticsData => {
+  const themes = data.top_themes ?? [];
+  const daily = data.engagement_daily ?? [];
+  const ov = data.overview ?? {};
+
+  return {
+    totalQueries: ov.total_student_messages ?? 0,
+    totalStudents: ov.total_students ?? 0,
+    activeStudents7d: ov.active_students_7d ?? 0,
+    totalConversations: ov.total_conversations ?? 0,
+    queryCategories: themes.map((t) => ({ name: t.theme, count: t.question_count })),
+    topQueries: themes.map((t) => ({ query: t.theme, count: t.question_count })),
+    dailyUsage: daily.map((d) => ({
+      date: new Date(d.day).toLocaleDateString(undefined, { weekday: "short" }),
+      count: d.student_messages,
+    })),
+  };
 };
 
 // ALU brand colors
@@ -57,29 +69,35 @@ const ALU_COLORS = {
 function AnalyticsDashboard() {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState("week");
 
-  useEffect(() => {
-    // Replace with actual API call
-    const fetchAnalytics = async () => {
-      try {
-        // const response = await fetch("/api/admin/analytics");
-        // const data = await response.json();
-        // setAnalytics(data);
-        
-        // Using mock data for now
-        setTimeout(() => {
-          setAnalytics(mockAnalytics);
-          setLoading(false);
-        }, 800);
-      } catch (error) {
-        console.error("Failed to fetch analytics:", error);
-        setLoading(false);
+  const fetchAnalytics = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Live Aurora analytics via the admin overview route. adminFetch attaches
+      // the signed-in admin's Firebase bearer token; the backend's require_admin
+      // gate rejects non-admins with 401/403.
+      const response = await adminFetch("/api/admin/overview");
+      if (!response.ok) {
+        throw new Error(`Server responded ${response.status}`);
       }
-    };
+      const data: OverviewResponse = await response.json();
+      setAnalytics(toAnalytics(data));
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error("Failed to fetch analytics:", err);
+      setError(msg);
+      toast.error("Could not load analytics", { description: msg });
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
+  useEffect(() => {
     fetchAnalytics();
-  }, [timeRange]);
+  }, [fetchAnalytics, timeRange]);
 
   if (loading) {
     return (
@@ -93,18 +111,32 @@ function AnalyticsDashboard() {
   }
 
   if (!analytics) {
-    return <div className="container mx-auto p-6 flex justify-center items-center h-screen">Failed to load analytics data</div>;
+    return (
+      <div className="container mx-auto p-6 flex flex-col justify-center items-center h-screen gap-4">
+        <p className="text-lg">{error ? `Failed to load analytics: ${error}` : "No analytics data available"}</p>
+        <Button variant="outline" onClick={fetchAnalytics} className="gap-2">
+          <RefreshCw className="h-4 w-4" />
+          Retry
+        </Button>
+        <Link to="/settings" className="text-[#D4AF37] hover:underline text-sm">Back to Settings</Link>
+      </div>
+    );
   }
 
   // For a real visualization, we would use charts from recharts
   // This is just a placeholder for now
-  const mockBarChart = (
+  const maxDaily = Math.max(1, ...analytics.dailyUsage.map((d) => d.count));
+  const dailyUsageChart = analytics.dailyUsage.length === 0 ? (
+    <div className="h-64 bg-[#D4AF37]/10 rounded-lg flex items-center justify-center text-muted-foreground">
+      No activity recorded yet
+    </div>
+  ) : (
     <div className="h-64 bg-[#D4AF37]/10 rounded-lg flex items-end p-4 justify-between">
       {analytics.dailyUsage.map((day, i) => (
         <div key={i} className="flex flex-col items-center">
-          <div 
-            className="bg-[#D4AF37] w-12 rounded-t-lg" 
-            style={{ height: `${(day.count / 200) * 100}%` }}
+          <div
+            className="bg-[#D4AF37] w-12 rounded-t-lg"
+            style={{ height: `${Math.max(2, (day.count / maxDaily) * 100)}%` }}
           ></div>
           <span className="text-xs mt-2">{day.date}</span>
         </div>
@@ -112,15 +144,28 @@ function AnalyticsDashboard() {
     </div>
   );
 
-  // Mock pie chart
-  const mockPieChart = (
-    <div className="h-64 bg-[#D4AF37]/10 rounded-lg p-4 flex items-center justify-center">
-      <div className="w-40 h-40 rounded-full border-8 border-[#D4AF37] relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full bg-[#D4AF37]" style={{ clipPath: 'polygon(0 0, 35% 0, 35% 100%, 0% 100%)' }}></div>
-        <div className="absolute top-0 left-0 w-full h-full bg-[#D4AF37]" style={{ clipPath: 'polygon(35% 0, 62% 0, 62% 100%, 35% 100%)' }}></div>
-        <div className="absolute top-0 left-0 w-full h-full bg-[#2E7D32]" style={{ clipPath: 'polygon(62% 0, 83% 0, 83% 100%, 62% 100%)' }}></div>
-        <div className="absolute top-0 left-0 w-full h-full bg-[#334155]" style={{ clipPath: 'polygon(83% 0, 100% 0, 100% 100%, 83% 100%)' }}></div>
-      </div>
+  // Category breakdown — proportional bars from the real question themes.
+  const categoryTotal = analytics.queryCategories.reduce((sum, c) => sum + c.count, 0);
+  const categoryChart = analytics.queryCategories.length === 0 ? (
+    <div className="h-64 bg-[#D4AF37]/10 rounded-lg flex items-center justify-center text-muted-foreground">
+      No categorized questions yet
+    </div>
+  ) : (
+    <div className="h-64 bg-[#D4AF37]/10 rounded-lg p-4 flex flex-col justify-center gap-3">
+      {analytics.queryCategories.map((cat, i) => (
+        <div key={i} className="space-y-1">
+          <div className="flex justify-between text-sm">
+            <span className="font-medium">{cat.name}</span>
+            <span className="text-muted-foreground">{cat.count}</span>
+          </div>
+          <div className="h-2 bg-white/60 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-[#D4AF37]"
+              style={{ width: `${categoryTotal ? (cat.count / categoryTotal) * 100 : 0}%` }}
+            />
+          </div>
+        </div>
+      ))}
     </div>
   );
 
@@ -146,10 +191,10 @@ function AnalyticsDashboard() {
               <SelectItem value="quarter">Last 90 Days</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" size="icon">
+          <Button variant="outline" size="icon" onClick={fetchAnalytics} title="Refresh">
             <RefreshCw className="h-4 w-4" />
           </Button>
-          <Button variant="outline" size="icon">
+          <Button variant="outline" size="icon" title="Download (coming soon)" disabled>
             <Download className="h-4 w-4" />
           </Button>
         </div>
@@ -158,41 +203,41 @@ function AnalyticsDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle>Total Queries</CardTitle>
-            <CardDescription>All-time queries processed</CardDescription>
+            <CardTitle>Student Messages</CardTitle>
+            <CardDescription>Total questions asked</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-4xl font-bold">{analytics.totalQueries.toLocaleString()}</p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle>Avg. Response Time</CardTitle>
-            <CardDescription>In seconds</CardDescription>
+            <CardTitle>Total Students</CardTitle>
+            <CardDescription>Registered users</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-4xl font-bold">{analytics.responseTime}s</p>
+            <p className="text-4xl font-bold">{analytics.totalStudents.toLocaleString()}</p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle>User Satisfaction</CardTitle>
-            <CardDescription>Based on feedback</CardDescription>
+            <CardTitle>Active (7 days)</CardTitle>
+            <CardDescription>Students active this week</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-4xl font-bold">{(analytics.userSatisfaction * 100).toFixed(0)}%</p>
+            <p className="text-4xl font-bold">{analytics.activeStudents7d.toLocaleString()}</p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle>Active Sessions</CardTitle>
-            <CardDescription>Current users</CardDescription>
+            <CardTitle>Conversations</CardTitle>
+            <CardDescription>Total chat sessions</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-4xl font-bold">24</p>
+            <p className="text-4xl font-bold">{analytics.totalConversations.toLocaleString()}</p>
           </CardContent>
         </Card>
       </div>
@@ -233,7 +278,7 @@ function AnalyticsDashboard() {
                 <CardDescription>Number of queries per day</CardDescription>
               </CardHeader>
               <CardContent>
-                {mockBarChart}
+                {dailyUsageChart}
               </CardContent>
             </Card>
             
@@ -243,17 +288,20 @@ function AnalyticsDashboard() {
                 <CardDescription>Distribution by topic</CardDescription>
               </CardHeader>
               <CardContent>
-                {mockPieChart}
+                {categoryChart}
               </CardContent>
             </Card>
             
             <Card className="md:col-span-2">
               <CardHeader>
-                <CardTitle>Top Queries</CardTitle>
-                <CardDescription>Most common questions</CardDescription>
+                <CardTitle>Top Question Themes</CardTitle>
+                <CardDescription>Most common topics students ask about</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
+                  {analytics.topQueries.length === 0 && (
+                    <p className="text-center py-4 text-muted-foreground">No questions recorded yet</p>
+                  )}
                   {analytics.topQueries.map((query, i) => (
                     <div key={i} className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
