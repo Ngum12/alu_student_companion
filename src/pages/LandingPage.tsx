@@ -15,7 +15,7 @@ import { useAuth } from "@/contexts/AuthContext";
 // Real ALU assets served from /public. The leading slash makes Vite resolve
 // these against the deployment root, so they work both locally and on Vercel.
 // Filenames with spaces are URL-encoded so the browser fetches them correctly.
-const HERO_IMAGE = "/Andrew%20ALUSIVE.jpg.jpeg";
+const HERO_IMAGE = "/campus.png";
 const COMPANION_LOGO = "/logo%20(3).png";
 
 const STUDY_IMAGE = "/study.png";
@@ -124,7 +124,7 @@ export default function LandingPage() {
             <div className="relative overflow-hidden rounded-3xl aspect-[4/5] shadow-2xl">
               <img
                 src={HERO_IMAGE}
-                alt="ALU students at an ALUSIVE community event"
+                alt="ALU students walking across campus at sunset"
                 className="w-full h-full object-cover"
                 loading="eager"
               />
